@@ -137,15 +137,15 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
 
 ### 常用指令
 
-    ```bash
-    # 查詢目前所有 namespace
-    kubectl get namespace 
+```bash
+# 查詢目前所有 namespace
+kubectl get namespace 
 
-    # 查詢目前所有 pods
-    kubectl get pods
-    kubectl get pods --namespace=<insert-namespace-name-here>
+# 查詢目前所有 pods
+kubectl get pods
+kubectl get pods --namespace=<insert-namespace-name-here>
 
-    # 查詢目前所有 Service
-    kubectl get service
-    kubectl get service --namespace=<insert-namespace-name-here>
-    ```
+# 查詢目前所有 Service
+kubectl get service
+kubectl get service --namespace=<insert-namespace-name-here>
+```
