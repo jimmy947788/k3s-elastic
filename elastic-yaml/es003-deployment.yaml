@@ -28,19 +28,19 @@ spec:
       containers:
         - env:
             - name: ES_JAVA_OPTS
-              value: -Xms512m -Xmx512m
+              value: -Xmx2048m  -Xms2048m
             - name: bootstrap.memory_lock
               value: "true"
             - name: cluster.initial_master_nodes
-              value: es01,es02,es03
+              value: es001,es002,es003
             - name: cluster.name
               value: es-docker-cluster
             - name: discovery.seed_hosts
-              value: es01,es02
+              value: es001,es002
             - name: node.name
-              value: es03
+              value: es003
           image: elasticsearch:7.10.1
-          name: es03
+          name: es003
           resources: {}
           volumeMounts:
             - mountPath: /usr/share/elasticsearch/data

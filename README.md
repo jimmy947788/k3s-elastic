@@ -191,6 +191,7 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
 4. 修改hosts檔案  
     因為根本沒有`k3s.daesboard.info` 這個網域，要在hosts檔案裡面增加對應IP。
     就可以在瀏覽器輸入網址 `https://k3s.daesboard.info:8080` 打開 Dashboard。
+
     ```bash
     # hosts 所在路徑 
     # Linux: /etc/hosts
@@ -198,6 +199,7 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
     # Windows: C:\WINDOWS\system32\drivers\etc\hosts
     192.168.0.170 k3s.daesboard.info  # 加入對應IP
     ```
+
 ### Deploy elastic & Kiabna
 
 1. 建立 Persistent Volume Claim
@@ -215,7 +217,7 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
 3. 建立 Service
 
     ```bash
-    sudo kubectl apply -f es001-service.yaml,kibana-service.yaml,mariadb-service.yaml
+    sudo kubectl apply -f es001-service.yaml,es002-service.yaml,es003-service.yaml,kibana-service.yaml,mariadb-service.yaml
     ```
 
 4. 建立 Deployment
