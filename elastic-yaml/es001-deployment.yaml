@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\bin\kompose.exe convert
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: es001
+  name: es001
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: es001
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\bin\kompose.exe convert
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/elastic: "true"
+        io.kompose.service: es001
+    spec:
+      containers:
+        - env:
+            - name: ES_JAVA_OPTS
+              value: -Xms512m -Xmx512m
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: cluster.initial_master_nodes
+              value: es01,es02,es03
+            - name: cluster.name
+              value: es-docker-cluster
+            - name: discovery.seed_hosts
+              value: es02,es03
+            - name: node.name
+              value: es01
+          image: elasticsearch:7.10.1
+          name: es01
+          ports:
+            - containerPort: 9200
+          resources: {}
+          volumeMounts:
+            - mountPath: /usr/share/elasticsearch/data
+              name: data01
+      restartPolicy: Always
+      volumes:
+        - name: data01
+          persistentVolumeClaim:
+            claimName: data01
+status: {}

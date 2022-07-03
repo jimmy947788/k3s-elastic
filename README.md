@@ -110,30 +110,119 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
         sudo k3s kubectl -n kubernetes-dashboard describe secret admin-user-token | grep '^token'
         ```
 
-    5. 允許存取 Dashboard
+    5. 存取 Dashboard  
+        1. 使用 `proxy` 代理方式
 
-        ```bash
-        # 啟動 k3s  API server 
-        # 預設只會綁定本機 http://127.0.0.1:8001/
-        kubectl proxy # --address='0.0.0.0' --port=8002 --accept-hosts='^*$'
+            ```bash
+            # 啟動 k3s API server 
+            # 預設只會綁定本機 http://127.0.0.1:8001/
+            kubectl proxy 
 
-        # 轉發本機 8080 port 到 service/kubernetes-dashboard 的 443 port
-        # 綁定所有IP位址0.0.0.0            
-        kubectl port-forward -n kubernetes-dashboard --address 0.0.0.0 service/kubernetes-dashboard 8080:443
-        ```
+            # 讓API server可以接收所有主機網段來的 request
+            kubectl proxy --address='0.0.0.0' --port=8002 --accept-hosts='^*$'
+            ```
 
-        停止 proxy bind 的 port
+            使用 `proxy` 代理方式会使得 Dashboard 可以通过 http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/ 访问。
+
+        2. 使用 `port-forward` 轉發port方式
+
+            ```bash
+            # 轉發本機 8080 port 到 service/kubernetes-dashboard 的 443 port
+            # 綁定所有IP位址0.0.0.0            
+            kubectl port-forward -n kubernetes-dashboard --address 0.0.0.0 service/kubernetes-dashboard 8080:443
+            ```
+
+            使用 `port-forward` 轉發方式会使得 Dashboard 可以通过 https://192.168.0.170:8080/
+
+    6. 停止 proxy bind 的 port
 
         ```bash
         netstat -tulp | grep kubectl #列出 kubectl bind了那些port
         sudo kill -9 <pid> # kill process 就可以停止 listen port
         ```
 
-    6. Dashboard 網址:  
-        - 沒有轉發`port-forward`網址:
-        http://127.0.0.1:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/
-        - 有轉發`port-forward`網址:
-        https://192.168.0.148:8080/
+### 啟用 nginx-Ingress 
+
+1. 檢查驗證 Nginx Ingress POD是否運作正常:
+
+    ```bash
+    kubectl get pods -n ingress-nginx
+    ```
+
+    輸出如下:
+
+    ```sh
+    NAME                                        READY   STATUS      RESTARTS    AGE
+    ingress-nginx-admission-create-g9g49        0/1     Completed   0          11m
+    ingress-nginx-admission-patch-rqp78         0/1     Completed   1          11m
+    ingress-nginx-controller-59b45fb494-26npt   1/1     Running     0          11m
+    ```
+
+2. 建立 [`dashboard-ingress.yaml`](elastic-yaml/dashboard-ingress.yaml) 檔案
+
+    ```yaml
+    # 目的是為了能透過使用網域 k3s.daesboard.info 的方式存取 Dashboard
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+        name: dashboard-ingress
+        annotations:
+            nginx.ingress.kubernetes.io/rewrite-target: /$1
+    spec:
+        rules:
+            - host: k3s.daesboard.info
+            http:
+                paths:
+                - path: /
+                    pathType: Prefix
+                    backend:
+                    service:
+                        name: kubernetes-dashboard
+                        port:
+                        number: 8080
+    ```
+
+3. 通过运行下面的命令创建 Ingress 对象：
+
+    ```bash
+    sudo kubectl apply -f dashboard-ingress.yaml
+    ```
+
+4. 修改hosts檔案  
+    因為根本沒有`k3s.daesboard.info` 這個網域，要在hosts檔案裡面增加對應IP。
+    就可以在瀏覽器輸入網址 `https://k3s.daesboard.info:8080` 打開 Dashboard。
+    ```bash
+    # hosts 所在路徑 
+    # Linux: /etc/hosts
+    # Mac OS X: /private/etc/hosts
+    # Windows: C:\WINDOWS\system32\drivers\etc\hosts
+    192.168.0.170 k3s.daesboard.info  # 加入對應IP
+    ```
+### Deploy elastic & Kiabna
+
+1. 建立 Persistent Volume Claim
+
+    ```bash
+    sudo kubectl apply -f data01-persistentvolumeclaim.yaml,data02-persistentvolumeclaim.yaml,data03-persistentvol umeclaim.yaml,dbdata-persistentvolumeclaim.yaml
+    ```
+
+2. 建立 Network Policy
+
+    ```bash
+    sudo kubectl apply -f elastic-networkpolicy.yaml
+    ```
+
+3. 建立 Service
+
+    ```bash
+    sudo kubectl apply -f es001-service.yaml,kibana-service.yaml,mariadb-service.yaml
+    ```
+
+4. 建立 Deployment
+
+    ```bash
+    sudo kubectl apply -f es001-deployment.yaml,es002-deployment.yaml,es003-deployment.yaml,kibana-deploymen.yaml,mariadb-deployment.yaml
+    ```
 
 ### 常用指令
 

@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\bin\kompose.exe convert
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kibana
+  name: kibana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: kibana
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\bin\kompose.exe convert
+        kompose.version: 1.26.1 (a9d05d509)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/elastic: "true"
+        io.kompose.service: kibana
+    spec:
+      containers:
+        - env:
+            - name: ELASTICSEARCH_HOSTS
+              value: http://es001:9200
+          image: kibana:7.10.1
+          name: kibana
+          ports:
+            - containerPort: 5601
+          resources: {}
+      restartPolicy: Always
+status: {}

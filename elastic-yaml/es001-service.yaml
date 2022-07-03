@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: C:\bin\kompose.exe convert
+    kompose.version: 1.26.1 (a9d05d509)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: es001
+  name: es001
+spec:
+  ports:
+    - name: "9200"
+      port: 9200
+      targetPort: 9200
+  selector:
+    io.kompose.service: es001
+status:
+  loadBalancer: {}
