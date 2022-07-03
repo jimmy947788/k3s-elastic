@@ -12,15 +12,15 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
     </tr>
     <tr>
         <td>k3s-master</td>
-        <td>192.168.0.148</td>
+        <td>192.168.0.170</td>
     </tr>
     <tr>
         <td>k3s-node1</td>
-        <td>192.168.0.134</td>
+        <td>192.168.0.171</td>
     </tr>
     <tr>
         <td>k3s-node2</td>
-        <td>192.168.0.146</td>
+        <td>192.168.0.172</td>
     </tr>
 </table>
 
