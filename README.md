@@ -49,7 +49,7 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
    需要先知道 Master 的 `IP` 和 `K3S_TOKEN`
 
     ```bash
-    # 安裝 k3s node 腳本
+    # 在節點 k3s-node1 和 k3s-node2上執行
     curl -sfL https://get.k3s.io | K3S_URL=https://{Master IP}:6443 K3S_TOKEN={K3S_TOKEN} sh -
     ```
 
