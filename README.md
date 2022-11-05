@@ -26,7 +26,17 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
 
 ### 快速安裝 k3s
 
-1. 安裝 Master  
+1. 修改`hosts`檔案讓master和node可以互相透過hostname找到。
+
+    ```bash
+    # /etc/hosts
+    # k3s-master、k3s-node1、k3s-node2 三台都要
+    192.168.0.170   k3s-master
+    192.168.0.171   k3s-node1
+    192.168.0.172   k3s-node2
+    ```
+
+2. 安裝 Master  
 
     ```bash
     # 安裝 k3s master 腳本
@@ -45,12 +55,12 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
         sudo kubectl get nodes
         ```
 
-2. 安裝 Node  
+3. 安裝 Node  
    需要先知道 Master 的 `IP` 和 `K3S_TOKEN`
 
     ```bash
     # 在節點 k3s-node1 和 k3s-node2上執行
-    curl -sfL https://get.k3s.io | K3S_URL=https://{Master IP}:6443 K3S_TOKEN={K3S_TOKEN} sh -
+    curl -sfL https://get.k3s.io | K3S_URL=https://k3s-master:6443 K3S_TOKEN={K3S_TOKEN} sh - # 要在node主機的hosts加上IP才找的到 k3s-master
     ```
 
 ### 安裝 Dashboard
