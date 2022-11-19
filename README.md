@@ -117,7 +117,7 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
         要用這個 token 來登入 Dashboard
 
         ```bash
-        sudo k3s kubectl -n kubernetes-dashboard describe secret admin-user-token | grep '^token'
+        sudo k3s kubectl -n kubernetes-dashboard create token admin-user
         ```
 
     5. 存取 Dashboard  
@@ -151,7 +151,7 @@ k3s 是 kubernetes 輕量版，目的是用來做 container 管理和軟體load 
         sudo kill -9 <pid> # kill process 就可以停止 listen port
         ```
 
-### 啟用 nginx-Ingress 
+### 啟用 nginx-Ingress
 
 1. 檢查驗證 Nginx Ingress POD是否運作正常:
 
